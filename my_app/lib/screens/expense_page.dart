@@ -19,7 +19,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
     Stream<QuerySnapshot> expensesStream = context.watch<ExpensesListProvider>().expense;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Expenses")),
+      appBar: AppBar(title: const Text("Expenses", style: TextStyle(color: Colors.white),), backgroundColor: Colors.green),
       body: StreamBuilder(
         stream: expensesStream,
         builder: (context, snapshot) {
@@ -82,13 +82,14 @@ class _ExpensesPageState extends State<ExpensesPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
         onPressed: () {
           showDialog(
             context: context,
             builder: (BuildContext context) => ExpenseModal(type: 'Add'),
           );
         },
-        child: const Icon(Icons.add_outlined),
+        child: const Icon(Icons.attach_money_rounded, color: Colors.white,),
       ),
     );
   }

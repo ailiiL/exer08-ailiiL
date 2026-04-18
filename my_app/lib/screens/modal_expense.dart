@@ -6,13 +6,30 @@ import '../providers/expense_provider.dart';
 class ExpenseModal extends StatelessWidget {
   final String type;
   final Expense? item;
-  final TextEditingController _nameformFieldController = TextEditingController();
-  final TextEditingController _descformFieldController = TextEditingController();
-  final TextEditingController _categoryformFieldController = TextEditingController();
-  final TextEditingController _amountformFieldController = TextEditingController();
+  final TextEditingController _nameformFieldController =
+      TextEditingController();
+  final TextEditingController _descformFieldController =
+      TextEditingController();
+  final TextEditingController _amountformFieldController =
+      TextEditingController();
 
+  final List<String> categories = [
+    'Bills',
+    'Transportation',
+    'Food',
+    'Utilities',
+    'Health',
+    'Entertainment',
+    'Miscellaneous',
+  ];
 
-  ExpenseModal({super.key, required this.type, this.item});
+  String? selectedCategory;
+
+  ExpenseModal({super.key, required this.type, this.item}) {
+    if (item != null) {
+      selectedCategory = item!.category;
+    }
+  }
 
   // Method to show the title of the modal depending on the functionality
   Text _buildTitle() {
@@ -44,6 +61,7 @@ class ExpenseModal extends StatelessWidget {
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 hintText: item != null ? item!.name : '',
+                labelText: "Name",
               ),
             ),
             SizedBox(height: 10),
@@ -52,21 +70,29 @@ class ExpenseModal extends StatelessWidget {
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 hintText: item != null ? item!.desc : '',
+                labelText: "Description",
               ),
             ),
             SizedBox(height: 10),
-            TextField(
-              controller: _categoryformFieldController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: item != null ? item!.category : '',
+            DropdownButtonFormField<String>(
+              initialValue: selectedCategory,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Category",
               ),
+              items: categories.map((String category) {
+                return DropdownMenuItem(value: category, child: Text(category));
+              }).toList(),
+              onChanged: (String? value) {
+                selectedCategory = value;
+              },
             ),
             SizedBox(height: 10),
             TextField(
               controller: _amountformFieldController,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
+                labelText: "Amount",
               ),
             ),
           ],
@@ -85,7 +111,7 @@ class ExpenseModal extends StatelessWidget {
                 paid: false,
                 name: _nameformFieldController.text,
                 desc: _descformFieldController.text,
-                category: _categoryformFieldController.text,
+                category: selectedCategory ?? 'Others',
                 amount: int.tryParse(_amountformFieldController.text) ?? 0,
               );
 
@@ -95,7 +121,7 @@ class ExpenseModal extends StatelessWidget {
               Navigator.of(context).pop();
               break;
             }
-          
+
           case 'Delete':
             {
               context.read<ExpensesListProvider>().deleteExpense(item!.id!);
@@ -126,10 +152,10 @@ class ExpenseModal extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text("Cancel"),
           style: TextButton.styleFrom(
             textStyle: Theme.of(context).textTheme.labelLarge,
           ),
+          child: Text("Cancel"),
         ),
       ],
     );
