@@ -6,8 +6,9 @@ class Expense {
   String desc;
   String category;
   int amount;
+  bool paid;
 
-  Expense({this.id, required this.name, required this.desc, required this.category, required this.amount});
+  Expense({this.id, required this.name, required this.desc, required this.category, required this.amount, required this.paid});
 
   // Factory constructor to instantiate object from json format
   factory Expense.fromJson(Map<String, dynamic> json) {
@@ -17,6 +18,7 @@ class Expense {
       desc: json['desc'],
       category: json['category'],
       amount: json['amount'],
+      paid: json['paid']
     );
   }
 
@@ -26,6 +28,6 @@ class Expense {
   }
 
   Map<String, dynamic> toJson() {
-    return {'name': name, 'desc': desc, 'category': category, 'amount': amount};
+    return {'name': name, 'desc': desc, 'category': category, 'amount': amount, 'paid': paid};
   }
 }
