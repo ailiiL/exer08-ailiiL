@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
 import '../providers/expense_provider.dart';
-import 'modal_todo.dart';
+import 'modal_expense.dart';
 
 class ExpensesPage extends StatefulWidget {
   const ExpensesPage({super.key});
@@ -38,57 +38,43 @@ class _ExpensesPageState extends State<ExpensesPage> {
                 snapshot.data?.docs[index].data() as Map<String, dynamic>,
               );
               expense.id = snapshot.data?.docs[index].id;
-              return Dismissible(
-                key: Key(expense.id.toString()),
-                onDismissed: (direction) {
-                  context.read<ExpensesListProvider>().deleteExpense(expense.id!);
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${expense.name} dismissed')),
-                  );
-                },
-                background: Container(
-                  color: Colors.red,
-                  child: const Icon(Icons.delete),
+              return ListTile(
+                title: Text(expense.name),
+                leading: Checkbox(
+                  value: expense.paid,
+                  onChanged: (bool? value) {
+                    context.read<ExpensesListProvider>().toggleStatus(
+                      expense.id!,
+                      value!,
+                    );
+                  },
                 ),
-                child: ListTile(
-                  title: Text(expense.name),
-                  leading: Checkbox(
-                    value: expense.paid,
-                    onChanged: (bool? value) {
-                      context.read<ExpensesListProvider>().toggleStatus(
-                        expense.id!,
-                        value!,
-                      );
-                    },
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder:
-                                (BuildContext context) =>
-                                    ExpenseModal(type: 'Edit', item: expense),
-                          );
-                        },
-                        icon: const Icon(Icons.create_outlined),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder:
-                                (BuildContext context) =>
-                                    ExpenseModal(type: 'Delete', item: expense),
-                          );
-                        },
-                        icon: const Icon(Icons.delete_outlined),
-                      ),
-                    ],
-                  ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder:
+                              (BuildContext context) =>
+                                  ExpenseModal(type: 'Edit', item: expense),
+                        );
+                      },
+                      icon: const Icon(Icons.create_outlined),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder:
+                              (BuildContext context) =>
+                                  ExpenseModal(type: 'Delete', item: expense),
+                        );
+                      },
+                      icon: const Icon(Icons.delete_outlined),
+                    ),
+                  ],
                 ),
               );
             }),
