@@ -71,7 +71,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                             context: context,
                             builder:
                                 (BuildContext context) =>
-                                    TodoModal(type: 'Edit', item: expense),
+                                    ExpenseModal(type: 'Edit', item: expense),
                           );
                         },
                         icon: const Icon(Icons.create_outlined),
@@ -82,7 +82,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                             context: context,
                             builder:
                                 (BuildContext context) =>
-                                    TodoModal(type: 'Delete', item: expense),
+                                    ExpenseModal(type: 'Delete', item: expense),
                           );
                         },
                         icon: const Icon(Icons.delete_outlined),
@@ -99,7 +99,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (BuildContext context) => TodoModal(type: 'Add'),
+            builder: (BuildContext context) => ExpenseModal(type: 'Add'),
           );
         },
         child: const Icon(Icons.add_outlined),

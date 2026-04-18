@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../models/todo_model.dart';
-import '../../../../providers/todo_provider.dart';
+import '../models/expense_model.dart';
+import '../providers/expense_provider.dart';
 
-class TodoModal extends StatelessWidget {
+class ExpenseModal extends StatelessWidget {
   final String type;
-  final Todo? item;
-  final TextEditingController _formFieldController = TextEditingController();
+  final Expense? item;
+  final TextEditingController _nameformFieldController = TextEditingController();
+  final TextEditingController _descformFieldController = TextEditingController();
+  final TextEditingController _categoryformFieldController = TextEditingController();
+  final TextEditingController _amountformFieldController = TextEditingController();
 
-  TodoModal({super.key, required this.type, this.item});
+
+  ExpenseModal({super.key, required this.type, this.item});
 
   // Method to show the title of the modal depending on the functionality
   Text _buildTitle() {
     switch (type) {
       case 'Add':
-        return const Text("Add new todo");
+        return const Text("Add new expense");
       case 'Edit':
-        return const Text("Edit todo");
+        return const Text("Edit expense");
       case 'Delete':
-        return const Text("Delete todo");
+        return const Text("Delete expense");
       default:
         return const Text("");
     }
@@ -29,16 +33,43 @@ class TodoModal extends StatelessWidget {
     switch (type) {
       case 'Delete':
         {
-          return Text("Are you sure you want to delete '${item!.title}'?");
+          return Text("Are you sure you want to delete '${item!.name}'?");
         }
       // Edit and add will have input field in them
       default:
-        return TextField(
-          controller: _formFieldController,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            hintText: item != null ? item!.title : '',
-          ),
+        return Column(
+          children: [
+            TextField(
+              controller: _nameformFieldController,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: item != null ? item!.name : '',
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: _descformFieldController,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: item != null ? item!.desc : '',
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: _categoryformFieldController,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: item != null ? item!.category : '',
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: _amountformFieldController,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ],
         );
     }
   }
@@ -50,31 +81,24 @@ class TodoModal extends StatelessWidget {
           case 'Add':
             {
               // Instantiate a todo objeect to be inserted, default userID will be 1, the id will be the next id in the list
-              Todo temp = Todo(
-                completed: false,
-                title: _formFieldController.text,
+              Expense temp = Expense(
+                paid: false,
+                name: _nameformFieldController.text,
+                desc: _descformFieldController.text,
+                category: _categoryformFieldController.text,
+                amount: int.tryParse(_amountformFieldController.text) ?? 0,
               );
 
-              context.read<TodoListProvider>().addTodo(temp);
+              context.read<ExpensesListProvider>().addExpense(temp);
 
               // Remove dialog after adding
               Navigator.of(context).pop();
               break;
             }
-          case 'Edit':
-            {
-              context.read<TodoListProvider>().editTodo(
-                item!.id!,
-                _formFieldController.text,
-              );
-
-              // Remove dialog after editing
-              Navigator.of(context).pop();
-              break;
-            }
+          
           case 'Delete':
             {
-              context.read<TodoListProvider>().deleteTodo(item!.id!);
+              context.read<ExpensesListProvider>().deleteExpense(item!.id!);
 
               // Remove dialog after editing
               Navigator.of(context).pop();
