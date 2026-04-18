@@ -7,14 +7,14 @@ class FirebaseExpensesApi {
     return db.collection('expenses').snapshots();
   }
 
-  Future<String> addTodo(Map<String, dynamic> todo) async {
+  Future<String> addExpense(Map<String, dynamic> expense) async {
     try{
-      //await db.collection("todos").add(todo);
+      //await db.collection("expenses").add(expense);
+
+      expense['id'] = db.collection('expenses').doc().id;
+      await db.collection("expenses").doc(expense['id']).set(expense);
       
-      todo['id'] = db.collection('todos').doc().id;
-      await db.collection("todos").doc(todo['id']).set(todo);
-      
-      return "Successfully added todo!";
+      return "Successfully added an expense!";
 
     } on FirebaseException catch (e){
       return "Error on ${e.code}: ${e.message}";
@@ -23,11 +23,11 @@ class FirebaseExpensesApi {
   }
 
 
-  Future<String> deleteTodo(String id) async {
+  Future<String> deleteExpense(String id) async {
     try{
-      await db.collection("todos").doc(id).delete();
+      await db.collection("expenses").doc(id).delete();
       
-      return "Successfully deleted todo!";
+      return "Successfully deleted an expense!";
 
     } on FirebaseException catch (e){
       return "Error on ${e.code}: ${e.message}";
@@ -36,11 +36,11 @@ class FirebaseExpensesApi {
   }
 
 
-  Future<String> editTodo(String id, String title) async {
+  Future<String> editExpense(String id, String name, String desc, String category, int amount) async {
     try{
-      await db.collection("todos").doc(id).update({'title':title, 'id':id});
+      await db.collection("expenses").doc(id).update({'name':name, 'id':id, 'desc': desc, 'category': category, 'amount':amount});
       
-      return "Successfully edited todo!";
+      return "Successfully edited an expense!";
 
     } on FirebaseException catch (e){
       return "Error on ${e.code}: ${e.message}";
@@ -50,9 +50,9 @@ class FirebaseExpensesApi {
 
   Future<String> toggleStatus(String id, bool status) async {
     try{
-      await db.collection("todos").doc(id).update({'completed':status});
+      await db.collection("expenses").doc(id).update({'paid':status});
       
-      return "Successfully updated status of the todo!";
+      return "Successfully updated status of the expense!";
 
     } on FirebaseException catch (e){
       return "Error on ${e.code}: ${e.message}";
