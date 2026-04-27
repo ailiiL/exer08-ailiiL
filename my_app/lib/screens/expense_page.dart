@@ -52,7 +52,18 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   );
                 },
 
-                title: Text(expense.name),
+                title: Text(
+                  expense.name,
+                  style: TextStyle(
+                    decoration: expense.paid
+                        ? TextDecoration.lineThrough
+                        : null,
+                    color: expense.paid ? Colors.grey : Colors.black,
+                  ),
+                ),
+                subtitle: expense.paid
+                    ? const Text("Paid", style: TextStyle(color: Colors.green))
+                    : null,
 
                 leading: Checkbox(
                   value: expense.paid,

@@ -18,7 +18,7 @@ class Expense {
       desc: json['desc'],
       category: json['category'],
       amount: json['amount'],
-      paid: json['paid']
+      paid: json['paid'] ?? false,
     );
   }
 
