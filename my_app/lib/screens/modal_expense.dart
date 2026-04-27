@@ -3,15 +3,24 @@ import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
 import '../providers/expense_provider.dart';
 
-class ExpenseModal extends StatelessWidget {
+class ExpenseModal extends StatefulWidget {
   final String type;
   final Expense? item;
-  final TextEditingController _nameformFieldController =
-      TextEditingController();
-  final TextEditingController _descformFieldController =
-      TextEditingController();
-  final TextEditingController _amountformFieldController =
-      TextEditingController();
+
+  const ExpenseModal({
+    super.key,
+    required this.type,
+    this.item,
+  });
+
+  @override
+  State<ExpenseModal> createState() => _ExpenseModalState();
+}
+
+class _ExpenseModalState extends State<ExpenseModal> {
+  final _nameController = TextEditingController();
+  final _descController = TextEditingController();
+  final _amountController = TextEditingController();
 
   final List<String> categories = [
     'Bills',
@@ -25,138 +34,166 @@ class ExpenseModal extends StatelessWidget {
 
   String? selectedCategory;
 
-  ExpenseModal({super.key, required this.type, this.item}) {
-    if (item != null) {
-      selectedCategory = item!.category;
+  @override
+  void initState() {
+    super.initState();
+
+    // Pre-fill fields when editing
+    if (widget.item != null) {
+      _nameController.text = widget.item!.name;
+      _descController.text = widget.item!.desc;
+      _amountController.text = widget.item!.amount.toString();
+      selectedCategory = widget.item!.category;
     }
   }
 
-  // Method to show the title of the modal depending on the functionality
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
+
   Text _buildTitle() {
-    switch (type) {
+    switch (widget.type) {
       case 'Add':
-        return const Text("Add new expense");
+        return const Text('Add Expense');
+
       case 'Edit':
-        return const Text("Edit expense");
+        return const Text('Edit Expense');
+
       case 'Delete':
-        return const Text("Delete expense");
+        return const Text('Delete Expense');
+
       default:
-        return const Text("");
+        return const Text('');
     }
   }
 
-  // Method to build the content or body depending on the functionality
-  Widget _buildContent(BuildContext context) {
-    switch (type) {
-      case 'Delete':
-        {
-          return Text("Are you sure you want to delete '${item!.name}'?");
-        }
-      // Edit and add will have input field in them
-      default:
-        return Column(
-          children: [
-            TextField(
-              controller: _nameformFieldController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: item != null ? item!.name : '',
-                labelText: "Name",
-              ),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _descformFieldController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: item != null ? item!.desc : '',
-                labelText: "Description",
-              ),
-            ),
-            SizedBox(height: 10),
-            DropdownButtonFormField<String>(
-              initialValue: selectedCategory,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Category",
-              ),
-              items: categories.map((String category) {
-                return DropdownMenuItem(value: category, child: Text(category));
-              }).toList(),
-              onChanged: (String? value) {
-                selectedCategory = value;
-              },
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _amountformFieldController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: "Amount",
-              ),
-            ),
-          ],
-        );
+  Widget _buildContent() {
+    if (widget.type == 'Delete') {
+      return Text(
+        "Are you sure you want to delete '${widget.item!.name}'?",
+      );
     }
-  }
 
-  TextButton _dialogAction(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        switch (type) {
-          case 'Add':
-            {
-              // Instantiate a todo objeect to be inserted, default userID will be 1, the id will be the next id in the list
-              Expense temp = Expense(
-                paid: false,
-                name: _nameformFieldController.text,
-                desc: _descformFieldController.text,
-                category: selectedCategory ?? 'Others',
-                amount: int.tryParse(_amountformFieldController.text) ?? 0,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              labelText: 'Name',
+              border: OutlineInputBorder(),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          TextField(
+            controller: _descController,
+            decoration: const InputDecoration(
+              labelText: 'Description',
+              border: OutlineInputBorder(),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          DropdownButtonFormField<String>(
+            initialValue: selectedCategory,
+            decoration: const InputDecoration(
+              labelText: 'Category',
+              border: OutlineInputBorder(),
+            ),
+            items: categories.map((category) {
+              return DropdownMenuItem(
+                value: category,
+                child: Text(category),
               );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                selectedCategory = value;
+              });
+            },
+          ),
 
-              context.read<ExpensesListProvider>().addExpense(temp);
+          const SizedBox(height: 12),
 
-              // Remove dialog after adding
-              Navigator.of(context).pop();
-              break;
-            }
-
-          case 'Delete':
-            {
-              context.read<ExpensesListProvider>().deleteExpense(item!.id!);
-
-              // Remove dialog after editing
-              Navigator.of(context).pop();
-              break;
-            }
-        }
-      },
-      style: TextButton.styleFrom(
-        textStyle: Theme.of(context).textTheme.labelLarge,
+          TextField(
+            controller: _amountController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Amount',
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ],
       ),
-      child: Text(type),
     );
+  }
+
+  void _submit() {
+    switch (widget.type) {
+
+      case 'Add':
+        final expense = Expense(
+          paid: false,
+          name: _nameController.text,
+          desc: _descController.text,
+          category: selectedCategory ?? 'Bills',
+          amount: int.tryParse(_amountController.text) ?? 0,
+        );
+
+        context.read<ExpensesListProvider>().addExpense(expense);
+        break;
+
+      case 'Edit':
+        final updatedExpense = Expense(
+          id: widget.item!.id,
+          paid: widget.item!.paid,
+          name: _nameController.text,
+          desc: _descController.text,
+          category: selectedCategory ?? 'Bills',
+          amount: int.tryParse(_amountController.text) ?? 0,
+        );
+
+        context.read<ExpensesListProvider>().editExpense(updatedExpense);
+        break;
+
+      case 'Delete':
+        context.read<ExpensesListProvider>().deleteExpense(
+          widget.item!.id!,
+        );
+        break;
+    }
+
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: _buildTitle(),
-      content: _buildContent(context),
+      content: _buildContent(),
+      actions: [
 
-      // Contains two buttons - add/edit/delete, and cancel
-      actions: <Widget>[
-        _dialogAction(context),
+        TextButton(
+          onPressed: _submit,
+          child: Text(widget.type),
+        ),
+
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pop(context);
           },
-          style: TextButton.styleFrom(
-            textStyle: Theme.of(context).textTheme.labelLarge,
-          ),
-          child: Text("Cancel"),
+          child: const Text('Cancel'),
         ),
+
       ],
     );
   }

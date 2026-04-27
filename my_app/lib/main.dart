@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       title: 'Expense Tracker',
       initialRoute: '/',
       routes: {'/': (context) => const ExpensesPage()},
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.green),
     );
   }
 }

@@ -29,10 +29,17 @@ class ExpensesListProvider with ChangeNotifier {
   }
 
   // TODO: edit a todo item and update it in Firestore
-  Future<void> editExpense(String id, String newName, String newDesc, String newCategory, int newAmount) async {
-    String message = await firebaseService.editExpense(id, newName, newDesc, newCategory, newAmount);
-    print(message);
-    notifyListeners();
+  // Future<void> editExpense(String id, String newName, String newDesc, String newCategory, int newAmount) async {
+  //   String message = await firebaseService.editExpense(id, newName, newDesc, newCategory, newAmount);
+  //   print(message);
+  //   notifyListeners();
+  // }
+
+  Future<void> editExpense(Expense expense) async {
+    await FirebaseFirestore.instance
+        .collection('expenses')
+        .doc(expense.id)
+        .update(expense.toJson());
   }
 
   // TODO: delete a todo item and update it in Firestore
@@ -44,7 +51,7 @@ class ExpensesListProvider with ChangeNotifier {
 
   // TODO: modify a todo status and update it in Firestore
   Future<void> toggleStatus(String id, bool status) async {
-    String message = await firebaseService.toggleStatus(id,status);
+    String message = await firebaseService.toggleStatus(id, status);
     print(message);
     notifyListeners();
   }

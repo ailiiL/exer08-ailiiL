@@ -16,10 +16,15 @@ class _ExpensesPageState extends State<ExpensesPage> {
   @override
   Widget build(BuildContext context) {
     // access the list of todos in the provider
-    Stream<QuerySnapshot> expensesStream = context.watch<ExpensesListProvider>().expense;
+    Stream<QuerySnapshot> expensesStream = context
+        .watch<ExpensesListProvider>()
+        .expense;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Expenses", style: TextStyle(color: Colors.white),), backgroundColor: Colors.green),
+      appBar: AppBar(
+        title: const Text("Expenses", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.green,
+      ),
       body: StreamBuilder(
         stream: expensesStream,
         builder: (context, snapshot) {
@@ -39,7 +44,16 @@ class _ExpensesPageState extends State<ExpensesPage> {
               );
               expense.id = snapshot.data?.docs[index].id;
               return ListTile(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        ExpenseModal(type: 'Edit', item: expense),
+                  );
+                },
+
                 title: Text(expense.name),
+
                 leading: Checkbox(
                   value: expense.paid,
                   onChanged: (bool? value) {
@@ -49,32 +63,16 @@ class _ExpensesPageState extends State<ExpensesPage> {
                     );
                   },
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder:
-                              (BuildContext context) =>
-                                  ExpenseModal(type: 'Edit', item: expense),
-                        );
-                      },
-                      icon: const Icon(Icons.create_outlined),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder:
-                              (BuildContext context) =>
-                                  ExpenseModal(type: 'Delete', item: expense),
-                        );
-                      },
-                      icon: const Icon(Icons.delete_outlined),
-                    ),
-                  ],
+
+                trailing: IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          ExpenseModal(type: 'Delete', item: expense),
+                    );
+                  },
+                  icon: const Icon(Icons.delete_outlined),
                 ),
               );
             }),
@@ -89,7 +87,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
             builder: (BuildContext context) => ExpenseModal(type: 'Add'),
           );
         },
-        child: const Icon(Icons.attach_money_rounded, color: Colors.white,),
+        child: const Icon(Icons.attach_money_rounded, color: Colors.white),
       ),
     );
   }
