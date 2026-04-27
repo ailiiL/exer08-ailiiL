@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+// EXPENSE CLASS ATTRIBUTES
 class Expense {
   String? id;
   String name;

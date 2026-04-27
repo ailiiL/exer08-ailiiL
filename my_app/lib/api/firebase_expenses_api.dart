@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirebaseExpensesApi {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
+  // FIREBASE DATABASE
   Stream<QuerySnapshot> getAllExpenses(){
     return db.collection('expenses').snapshots();
   }
 
+  // ADD EXPENSE
   Future<String> addExpense(Map<String, dynamic> expense) async {
     try{
       //await db.collection("expenses").add(expense);
@@ -22,7 +24,7 @@ class FirebaseExpensesApi {
     
   }
 
-
+  // DELETE EXPENSE
   Future<String> deleteExpense(String id) async {
     try{
       await db.collection("expenses").doc(id).delete();
@@ -35,7 +37,7 @@ class FirebaseExpensesApi {
     
   }
 
-
+  // EDIT EXPENSE
   Future<String> editExpense(String id, String name, String desc, String category, int amount) async {
     try{
       await db.collection("expenses").doc(id).update({'name':name, 'id':id, 'desc': desc, 'category': category, 'amount':amount});
@@ -48,6 +50,7 @@ class FirebaseExpensesApi {
     
   }
 
+  // TOGGLE PAID
   Future<String> toggleStatus(String id, bool status) async {
     try{
       await db.collection("expenses").doc(id).update({'paid':status});

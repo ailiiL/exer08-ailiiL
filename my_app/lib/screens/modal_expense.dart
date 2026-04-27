@@ -82,7 +82,7 @@ class _ExpenseModalState extends State<ExpenseModal> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // NAME
+            // NAME TEXTFORMFIELD
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -102,7 +102,7 @@ class _ExpenseModalState extends State<ExpenseModal> {
 
             const SizedBox(height: 12),
 
-            // DESCRIPTION
+            // DESCRIPTION TEXTFORMFIELD
             TextFormField(
               controller: _descController,
               decoration: const InputDecoration(
@@ -119,7 +119,7 @@ class _ExpenseModalState extends State<ExpenseModal> {
 
             const SizedBox(height: 12),
 
-            // CATEGORY
+            // CATEGORY DROPFDOWN
             DropdownButtonFormField<String>(
               value: selectedCategory,
               decoration: const InputDecoration(
@@ -147,7 +147,7 @@ class _ExpenseModalState extends State<ExpenseModal> {
 
             const SizedBox(height: 12),
 
-            // AMOUNT
+            // AMOUNT TEXTFORMFIELD
             TextFormField(
               controller: _amountController,
               keyboardType: TextInputType.number,
@@ -179,13 +179,14 @@ class _ExpenseModalState extends State<ExpenseModal> {
     );
   }
 
+  // VALIDATION
   void _submit() {
     if (widget.type != 'Delete') {
       if (!_formKey.currentState!.validate()) {
         return;
       }
     }
-
+    // ADD TEXT BUTTON
     switch (widget.type) {
       case 'Add':
         final expense = Expense(
@@ -198,7 +199,7 @@ class _ExpenseModalState extends State<ExpenseModal> {
 
         context.read<ExpensesListProvider>().addExpense(expense);
         break;
-
+      // EDIT TEXT BUTTON
       case 'Edit':
         final updatedExpense = Expense(
           id: widget.item!.id,
@@ -211,7 +212,7 @@ class _ExpenseModalState extends State<ExpenseModal> {
 
         context.read<ExpensesListProvider>().editExpense(updatedExpense);
         break;
-
+      //DELETE TEXT BUTTON
       case 'Delete':
         context.read<ExpensesListProvider>().deleteExpense(
           widget.item!.id!,
@@ -221,7 +222,7 @@ class _ExpenseModalState extends State<ExpenseModal> {
 
     Navigator.pop(context);
   }
-
+  //DIALOG
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

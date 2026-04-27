@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Expense Tracker',
       initialRoute: '/',
-      routes: {'/': (context) => const ExpensesPage()},
+      routes: {'/': (context) => const ExpensesPage()}, //EXPENSES PAGE
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,

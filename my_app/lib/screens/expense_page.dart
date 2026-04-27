@@ -15,7 +15,7 @@ class ExpensesPage extends StatefulWidget {
 class _ExpensesPageState extends State<ExpensesPage> {
   @override
   Widget build(BuildContext context) {
-    // access the list of todos in the provider
+    // access the list of expenses in the provider
     Stream<QuerySnapshot> expensesStream = context
         .watch<ExpensesListProvider>()
         .expense;
@@ -35,7 +35,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
           } else if (!snapshot.hasData) {
             return const Center(child: Text("No Expenses Found"));
           }
-
+          // EXPENSES LIST TILES
           return ListView.builder(
             itemCount: snapshot.data?.docs.length,
             itemBuilder: ((context, index) {
@@ -48,10 +48,10 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) =>
-                        ExpenseModal(type: 'Edit', item: expense),
+                        ExpenseModal(type: 'Edit', item: expense),  //EDIT EXPENSE
                   );
                 },
-
+                // NAME
                 title: Text(
                   expense.name,
                   style: TextStyle(
@@ -64,7 +64,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                 subtitle: expense.paid
                     ? const Text("Paid", style: TextStyle(color: Colors.green))
                     : null,
-
+                // PAID STATUS
                 leading: Checkbox(
                   value: expense.paid,
                   onChanged: (bool? value) {
@@ -74,7 +74,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                     );
                   },
                 ),
-
+                // DELETE EXPENSE
                 trailing: IconButton(
                   onPressed: () {
                     showDialog(
@@ -90,6 +90,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
           );
         },
       ),
+      // ADD EXPENSE
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
         onPressed: () {
