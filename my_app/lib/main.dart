@@ -28,7 +28,10 @@ class MyApp extends StatelessWidget {
       title: 'Expense Tracker',
       initialRoute: '/',
       routes: {'/': (context) => const ExpensesPage()},
-      theme: ThemeData(primarySwatch: Colors.green),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        useMaterial3: true,
+      ),
     );
   }
 }
